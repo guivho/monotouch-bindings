@@ -38,28 +38,31 @@ namespace SDWebImageSample
 		void configureView ()
 		{
 			if (ImageUrl != null) {
-				ImageView.SetImageWithURL (ImageUrl, null, SDWebImageOptions.ProgressiveDownload, ProgressHandler, CompletedHandler);
+				ImageView.SetImage (ImageUrl, null, SDWebImageOptions.ProgressiveDownload, ProgressHandler, CompletedHandler);
 			}
 		}
 
 		void ProgressHandler (uint receivedSize, long expectedSize)
 		{
 			if (activityIndicator == null) {
-				activityIndicator = new UIActivityIndicatorView (UIActivityIndicatorViewStyle.Gray);
-				ImageView.AddSubview (activityIndicator);
-				activityIndicator.Center = ImageView.Center;
-				activityIndicator.StartAnimating ();
+				InvokeOnMainThread (() => {
+					activityIndicator = new UIActivityIndicatorView (UIActivityIndicatorViewStyle.Gray);
+					ImageView.AddSubview (activityIndicator);
+					activityIndicator.Center = ImageView.Center;
+					activityIndicator.StartAnimating ();
+				});
 			}
 		}
 
 		void CompletedHandler (UIImage image, NSError error, SDImageCacheType cacheType)
 		{
 			if (activityIndicator != null) {
-				activityIndicator.RemoveFromSuperview ();
-				activityIndicator = null;
+				InvokeOnMainThread (() => {
+					activityIndicator.RemoveFromSuperview ();
+					activityIndicator = null;
+				});
 			}
 		}
-
 	}
 }
 

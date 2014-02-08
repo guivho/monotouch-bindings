@@ -1,7 +1,5 @@
-VERSION=1.6.2
-BUILD_FLAGS=-unsafe -target:library -nowarn:436 -nowarn:219
-BTOUCH=/Developer/MonoTouch/usr/bin/btouch
-SMCS=/Developer/MonoTouch/usr/bin/smcs
+VERSION=1.7
+MONOXBUILD=/Library/Frameworks/Mono.framework/Commands/xbuild
 all: Datatrans.dll
 
 iPhone_Library.zip: 
@@ -20,17 +18,17 @@ iPhone_Library.zip:
 	unzip iPhone_Library.zip
 
 libdtipl.a: iPhone_Library.zip
-	unzip $< 
+	unzip -o $< 
 	ln -sf DTiPLv$(VERSION)/lib/libdtipl.a .
-	(cd ../sample/DatatarnsSample; ln -s ../../binding/DTiPLv$(VERSION)/resources/dtipl-resources.bundle .)
 
-Datatrans.dll: Makefile Datatrans.cs enums.cs AssemblyInfo.cs libdtipl.a
-	-mkdir -p ios
-	$(BTOUCH) -o $@ -d=MONOTOUCH -e Datatrans.cs enums.cs --sourceonly=list -tmpdir=ios
-	$(SMCS) $(BUILD_FLAGS) -out:$@ -define:MONOTOUCH @list enums.cs AssemblyInfo.cs -r:monotouch.dll -res:libdtipl.a
+Resources: libdtipl.a
+	mkdir Resources
+	cp -R DTiPLv$(VERSION)/resources/dtipl-resources.bundle Resources/dtipl-resources.bundle
 
+Datatrans.dll: Makefile libdtipl.a Resources
+	$(MONOXBUILD) /p:Configuration=Release Datatrans.csproj
+	cp bin/Release/Datatrans.dll Datatrans.dll
 
 clean: 
-	-rm -f *.dll iPhone_Library.zip libdtipl.a 
-	-rm -rf ios
+	-rm -rf *.dll iPhone_Library.zip libdtipl.a dtipl-resources.bundle DTiPLv$(VERSION)/ ios Resources/ bin/ obj/
 

@@ -85,6 +85,7 @@ namespace MG {
 
 	[BaseType (typeof (NSObject))]
 	[Model]
+	[Protocol]
 	interface MGSplitViewControllerDelegate {
 		[Export ("splitViewController:willHideViewController:withBarButtonItem:forPopoverController:")]
 		void WillHideViewController (MGSplitViewController svc, UIViewController viewController, UIBarButtonItem barButtonItem, UIPopoverController popoverController);
@@ -125,7 +126,7 @@ namespace MG {
 		[Export ("splitViewController")]
 		MGSplitViewController SplitViewController { get; set; }
 
-		[Export ("allowsDragging:")]
+		[Export ("allowsDragging")]
 		bool AllowsDragging { get; set; }
 
 		[Export ("drawGripThumbInRect:")]

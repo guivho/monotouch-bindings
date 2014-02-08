@@ -7,17 +7,31 @@ namespace Google.Maps
 	public enum MapViewType {
 		/** Basic maps.  The default. */
 		Normal = 1,
-		
+
 		/** Satellite maps with no labels. */
 		Satellite,
-		
+
 		/** Terrain maps. */
 		Terrain,
-		
+
 		/** Satellite maps with a transparent label overview. */
 		Hybrid,
-		
+
+		/** No maps, no labels.  Display of traffic data is not supported. */
+		None	
 	} 
+
+	public enum MarkerAnimation
+	{
+		None = 0,
+		Pop
+	}
+
+	public enum GeocoderErrorCode
+	{
+		InvalidCoordinate = 1,
+		ErrorInternal
+	}
 
 	[StructLayout (LayoutKind.Sequential)]
 	public struct VisibleRegion {
@@ -37,6 +51,18 @@ namespace Google.Maps
 			FarLeft = new CLLocationCoordinate2D (farLeftLatitude, farLeftLongitude);
 			FarRight = new CLLocationCoordinate2D (farRightLatitude, farRightLongitude);
 		}	
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	public struct Orientation {
+		public float Heading;
+		public float Pitch;
+
+		public Orientation (float heading, float pitch)
+		{
+			Heading = heading;
+			Pitch = pitch;
+		}
 	}
 }
 

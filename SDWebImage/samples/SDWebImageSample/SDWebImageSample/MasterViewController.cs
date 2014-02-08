@@ -23,7 +23,7 @@ namespace SDWebImageSample
 			Title = "SDWebImage";
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem ("Clear Cache", UIBarButtonItemStyle.Plain, ClearCache);
 			SDWebImageManager.SharedManager.ImageDownloader.SetValueforHTTPHeaderField ("SDWebImage Demo", "AppName");
-			SDWebImageManager.SharedManager.ImageDownloader.QueueMode = SDWebImageDownloaderQueueMode.LIFO;
+			SDWebImageManager.SharedManager.ImageDownloader.ExecutionOrder = SDWebImageDownloaderExecutionOrder.LIFO;
 
 			TableView.Source = new MyTableViewSource (this);
 		}
@@ -79,7 +79,7 @@ namespace SDWebImageSample
 				}
 
 				cell.TextLabel.Text = string.Format ("Image #{0}", indexPath.Row);
-				cell.ImageView.SetImageWithURL (new NSUrl (ctrl.objects [indexPath.Row]), UIImage.FromBundle ("placeholder"));
+				cell.ImageView.SetImage (new NSUrl (ctrl.objects [indexPath.Row]), UIImage.FromBundle ("placeholder"));
 
 				return cell;
 			}

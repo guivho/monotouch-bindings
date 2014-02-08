@@ -41,7 +41,7 @@ namespace GoogleAdmobSample
 		{
 			window = new UIWindow (UIScreen.MainScreen.Bounds);
 
-			var root = new RootElement("GoogleAdmbSample") {
+			var root = new RootElement("GoogleAdmobSample") {
 				new Section ("Insert Ad") {
 					new StringElement ("on TableView", AddToTableView),
 					new StringElement ("on Window", AddToWindow)
@@ -81,7 +81,7 @@ namespace GoogleAdmobSample
 					}
 				};
 			}
-			adViewTableView.LoadRequest (new GADRequest());
+			adViewTableView.LoadRequest (GADRequest.Request);
 		}
 
 		void RemoveAdFromTableView ()
@@ -119,7 +119,7 @@ namespace GoogleAdmobSample
 					}
 				};
 			}
-			adViewWindow.LoadRequest (new GADRequest());
+			adViewWindow.LoadRequest (GADRequest.Request);
 		}
 
 		void RemoveAdFromWindow ()

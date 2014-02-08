@@ -2,11 +2,18 @@ XBUILD=/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild
 PROJECT_ROOT=facebook-ios-sdk/src
 PROJECT=$(PROJECT_ROOT)/facebook-ios-sdk.xcodeproj
 TARGET=facebook-ios-sdk
+BTOUCH=/Developer/MonoTouch/usr/bin/btouch
+SMCS=/Developer/MonoTouch/usr/bin/smcs
+MONOXBUILD=/Library/Frameworks/Mono.framework/Commands/xbuild
 
-all: Facebook.dll
+# 	If you updated the binding to a newer Facebook version don't forget to change
+#	the Git TAG of newer the version you are binding against
+FBVERSIONTAG=sdk-version-3.11.1
+
+all: MonoTouch.FacebookConnect.dll
 
 facebook-ios-sdk:
-	git clone git@github.com:facebook/facebook-ios-sdk.git
+	git clone git@github.com:facebook/facebook-ios-sdk.git && cd facebook-ios-sdk && git checkout tags/$(FBVERSIONTAG)
 
 libFacebook-i386.a: facebook-ios-sdk
 	$(XBUILD) -project $(PROJECT) -target $(TARGET) -sdk iphonesimulator -configuration Release clean build
@@ -23,11 +30,22 @@ libFacebook-armv7s.a: facebook-ios-sdk
 libFacebookSDK.a: libFacebook-i386.a libFacebook-armv7.a libFacebook-armv7s.a
 	lipo -create -output $@ $^
 
-Facebook.dll: facebook.cs enum.cs Makefile extensions.cs AssemblyInfo.cs libFacebookSDK.a
-	/Developer/MonoTouch/usr/bin/btouch -e facebook.cs AssemblyInfo.cs -s=enum.cs -x=extensions.cs --out=$@ --link-with=libFacebookSDK.a,libFacebookSDK.a
+libarclite.a:
+	curl -L https://github.com/dalexsoto/MonoTouch-PSPDFKit-bindings/raw/master/AlexTouch.PSPDFKit/libarclite.a > libarclite.a
+	curl -L https://github.com/dalexsoto/MonoTouch-PSPDFKit-bindings/raw/master/AlexTouch.PSPDFKit/libarclite.linkwith.cs > libarclite.linkwith.cs
+
+MonoTouch.FacebookConnect.dll: libFacebookSDK.a libarclite.a
+	-mkdir -p ios
+	$(MONOXBUILD) /p:Configuration=Release MonoTouch.FacebookConnect.csproj
+	cp bin/Release/MonoTouch.FacebookConnect.dll MonoTouch.FacebookConnect.dll
+
+prepare: libFacebookSDK.a libarclite.a
 
 merge-docs: facebook-ios-sdk
 	../../RunDoxy -g facebook-ios-sdk/src Doxyfile `pwd`/../docs
 
 clean:
-	-rm -f *.a *dll
+	-rm -rf libarclite.linkwith.cs *.a *.dll *.mdb bin/ obj/ *.sln *.userprefs build/ list ios facebook-ios-sdk/ Resources/
+
+cleanproject:
+	-rm -rf *.dll bin/ obj/ list ios/
